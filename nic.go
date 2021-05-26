@@ -17,7 +17,7 @@ import (
 
 const NIC_CL_NEW_DOMAINS = "https://www.nic.cl/registry/Ultimos.do?t=1h&f=csv"
 const NIC_CL_DELETED_DOMAINS = "https://www.nic.cl/registry/Eliminados.do?t=1d&f=txt"
-const NIC_CL_ARBITRAJE = "https://www.nic.cl/rcal/sentenciasArbitrales.do?arbitro=&consignado=1&dominio=&filtroLimit=20&page=0&totalFallos=5"
+const NIC_CL_ARBITRAJE = "https://www.nic.cl/rcal/sentenciasArbitrales.do?arbitro=&consignado=1&dominio=&filtroLimit=10&page=0&totalFallos=5"
 
 const MAX_SENTENCE_NAMES_LENGTH = 150
 

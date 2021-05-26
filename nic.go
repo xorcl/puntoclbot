@@ -7,6 +7,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/spf13/viper"
@@ -50,12 +51,14 @@ func monitorNewDomains(posters []Poster) error {
 			newDomain := newDomains[i]
 			message := fmt.Sprintf(
 				`
+🆕 [Nuevo Dominio]
+
 Alguien acaba de registrar el dominio %s.
 
 Más información acá: https://www.nic.cl/registry/Whois.do?d=%s
 				`,
 				newDomain[0],
-				newDomain[0],
+				url.PathEscape(newDomain[0]),
 			)
 			for _, poster := range posters {
 				err := poster.Post(message)
@@ -71,6 +74,7 @@ Más información acá: https://www.nic.cl/registry/Whois.do?d=%s
 	viper.WriteConfig()
 	return nil
 }
+
 
 func monitorDeletedDomains(posters []Poster) error {
 	resp, err := http.Get(NIC_CL_DELETED_DOMAINS)
@@ -98,32 +102,34 @@ func monitorDeletedDomains(posters []Poster) error {
 		newDomains = append(newDomains, line[0])
 	}
 	if len(newDomains) > 0 {
+		// Post equispaced since now until midnight
+		now := time.Now()
+		domainsNumber := len(newDomains)
+		rand.Seed(now.UnixNano())
+		rand.Shuffle(domainsNumber, func(i, j int) { newDomains[i], newDomains[j] = newDomains[j], newDomains[i] })
+		untilMidnight := time.Until(time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, time.Local))
+		period := time.Duration(int(untilMidnight) / domainsNumber)
+		log.Printf("%d domains and %d until midnight... Must wait %d seconds between domains", domainsNumber, untilMidnight, period)
 		for _, newDomain := range newDomains {
 			message := fmt.Sprintf(
 				`
-Se acaba de liberar el dominio %s.
+❌ Dominio Eliminado
+
+Hoy a medianoche se liberó el dominio %s.
 
 Puedes registrarlo acá: https://www.nic.cl/registry/Whois.do?d=%s&buscar=Submit+Query&a=inscribir
 				`,
 				newDomain,
-				newDomain,
+				url.PathEscape(newDomain),
 			)
-			// Post equispaced since now until midnight
-			now := time.Now()
-			domainsNumber := len(newDomains)
-			rand.Seed(now.UnixNano())
-			rand.Shuffle(domainsNumber, func(i, j int) { newDomains[i], newDomains[j] = newDomains[j], newDomains[i] })
-			untilMidnight := time.Until(time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, time.Local))
-			period := time.Duration(int(untilMidnight) / domainsNumber)
-			log.Printf("%d domains and %d until midnight... Must wait %d seconds between domains", domainsNumber, untilMidnight, period)
 			for _, poster := range posters {
 				err := poster.Post(message)
 				if err != nil {
 					log.Printf("error posting: %s", err)
 				}
-				log.Printf("sleeping %d seconds...", period)
-				time.Sleep(period)
 			}
+			log.Printf("sleeping %d seconds...", period)
+			time.Sleep(period)
 		}
 	}
 	return nil

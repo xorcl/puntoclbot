@@ -32,6 +32,6 @@ func (t *TelegramBot) Start() error {
 }
 
 func (t *TelegramBot) Post(message string) error {
-	_, err := t.Bot.Send(t.Channel, message)
+	_, err := t.Bot.Send(t.Channel, message, telebot.Silent)
 	return err
 }

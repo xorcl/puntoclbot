@@ -38,7 +38,7 @@ func main() {
 			log.Printf("Error executing new domains: %s", err)
 		}
 	})
-	c.AddFunc("25 0 * * *", func() {
+	c.AddFunc("41 0 * * *", func() {
 		log.Printf("Executing deleted domains task...")
 		err := monitorDeletedDomains(posters)
 		if err != nil {

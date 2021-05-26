@@ -58,7 +58,7 @@ func monitorNewDomains(posters []Poster) error {
 				`
 🆕 [Nuevo Dominio]
 
-Alguien acaba de registrar el dominio %s.
+Se acaba de registrar el dominio %s.
 
 Más información acá: https://www.nic.cl/registry/Whois.do?d=%s
 				`,
@@ -178,9 +178,9 @@ func monitorDeletedDomains(posters []Poster) error {
 		for _, newDomain := range newDomains {
 			message := fmt.Sprintf(
 				`
-❌ Dominio Eliminado
+❌ [Dominio Eliminado]
 
-Hoy a medianoche se liberó el dominio %s.
+Hoy se liberó el dominio %s.
 
 Puedes registrarlo acá: https://www.nic.cl/registry/Whois.do?d=%s&buscar=Submit+Query&a=inscribir
 				`,

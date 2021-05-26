@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -109,7 +110,9 @@ Puedes registrarlo acá: https://www.nic.cl/registry/Whois.do?d=%s&buscar=Submit
 			)
 			// Post equispaced since now until midnight
 			now := time.Now()
-			domainsNumber := len(newDomain)
+			domainsNumber := len(newDomains)
+			rand.Seed(now.UnixNano())
+			rand.Shuffle(domainsNumber, func(i, j int) { newDomains[i], newDomains[j] = newDomains[j], newDomains[i] })
 			untilMidnight := time.Until(time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, time.Local))
 			period := time.Duration(int(untilMidnight) / domainsNumber)
 			log.Printf("%d domains and %d until midnight... Must wait %d seconds between domains", domainsNumber, untilMidnight, period)

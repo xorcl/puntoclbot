@@ -22,7 +22,6 @@ func main() {
 	log.Printf("Starting bot...")
 	posters := []Poster{
 		&TelegramBot{},
-		&TwitterAPI{},
 	}
 	for _, poster := range posters {
 		err := poster.Start()
@@ -34,6 +33,13 @@ func main() {
 	c.AddFunc("* * * * *", func() {
 		log.Printf("Executing new domains task...")
 		err := monitorNewDomains(posters)
+		if err != nil {
+			log.Printf("Error executing new domains: %s", err)
+		}
+	})
+	c.AddFunc("* * * * *", func() {
+		log.Printf("Executing arbitraje task...")
+		err := monitorArbitraje(posters)
 		if err != nil {
 			log.Printf("Error executing new domains: %s", err)
 		}

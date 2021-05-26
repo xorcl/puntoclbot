@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"gopkg.in/tucnak/telebot.v2"
 )
 
@@ -32,6 +34,10 @@ func (t *TelegramBot) Start() error {
 }
 
 func (t *TelegramBot) Post(message string) error {
+	log.Printf("Total Twitter message length: %d", len(message))
+	if len(message) > 280 {
+		log.Printf("Message too long for Twitter :(")
+	}
 	_, err := t.Bot.Send(t.Channel, message, telebot.Silent)
 	return err
 }

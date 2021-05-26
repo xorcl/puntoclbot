@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
 )
@@ -37,6 +39,10 @@ func (t *TwitterAPI) Start() error {
 }
 
 func (t *TwitterAPI) Post(message string) error {
+	log.Printf("Total Twitter message length: %d", len(message))
+	if len(message) > 280 {
+		log.Printf("Message too long for Twitter :(")
+	}
 	t.Client.Statuses.Update(message, &twitter.StatusUpdateParams{})
 	return nil
 }

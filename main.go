@@ -22,6 +22,7 @@ func main() {
 	log.Printf("Starting bot...")
 	posters := []Poster{
 		&TelegramBot{},
+		&TwitterAPI{},
 	}
 	for _, poster := range posters {
 		err := poster.Start()
